@@ -6,6 +6,11 @@
     <OutputType>Exe</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsTestAssetProject>true</IsTestAssetProject>
+    <TrimMode>link</TrimMode>
+    <TrimmerDefaultAction>link</TrimmerDefaultAction>
+    <!--IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+    <IlcPgoOptimize>true</IlcPgoOptimize-->
+    <IlcGenerateMapFile>true</IlcGenerateMapFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Dapper" Version="2.0.78" Condition=" '$(IsDatabase)' == 'true' " />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
@@ -33,17 +38,18 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-    <PackageReference Include="Npgsql" Version="6.0.0-preview4" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-preview4" />
+    <PackageReference Condition=" '$(IsDatabase)' == 'true' " Include="Npgsql" Version="6.0.0-preview4" />
+    <PackageReference Condition=" '$(IsDatabase)' == 'true' " Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-preview4" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
     <PackageReference Include="System.IO.Pipelines" Version="4.7.2" />
   </ItemGroup>
   
-   <!-- These references are used when running on the Benchmarks Server -->
-  <ItemGroup Condition="'$(BenchmarksTargetFramework)' != ''">
-    <FrameworkReference Update="Microsoft.AspNetCore.App" RuntimeFrameworkVersion="$(MicrosoftAspNetCoreAppPackageVersion)" />
-    <FrameworkReference Update="Microsoft.NETCore.App" RuntimeFrameworkVersion="$(MicrosoftNETCoreAppPackageVersion)" />
+  <ItemGroup>
+    <PackageReference Include="Utf8Json" Version="1.3.7" />
+    <!--PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-*" /-->
+    <IlcArg Include="--reflectedonly" />
+    <RdXmlFile Include="rd.xml" />
   </ItemGroup>
 </Project>
